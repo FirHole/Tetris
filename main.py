@@ -1,4 +1,4 @@
-import pygame as p
+import pygame as p # type: ignore
 from random import randint
 import time, sys
 
@@ -40,9 +40,8 @@ def new_data():
 
 
 def game_over():
-    SCREEN.blit(
-        p.font.SysFont('couriernew', int(Size/2)).render('Game over! Press Enter to restart', True, (255, 255, 255)),
-        (0, 0))
+    p.draw.rect(SCREEN, (100, 100, 100), p.Rect(0, 8.5 * Size, 10 *  Size, Size), 0)
+    SCREEN.blit( p.font.SysFont('comicsans', int(Size/2)+3, True).render('Game over! Press Enter to restart', True, (255, 255, 255)), (0, 8.55 * Size))
     p.display.flip()
     while True:
         for event in p.event.get():
@@ -62,9 +61,13 @@ data = new_data()
 def draw(matrix, figure):
     SCREEN.fill((0, 0, 0))
 
-    for x in range(0, Size * 11, Size):
+    for x in range(0, Size * 10, Size):
         # print('x:', x)
         p.draw.line(SCREEN, (50, 50, 50), (x, 0), (x, Size * 20), 1)
+
+    p.draw.rect(SCREEN, (100, 100, 100), p.Rect(Size * 10, 0, Size * 20, Size * 20), 0)
+    p.draw.rect(SCREEN, (50, 50, 50), p.Rect(Size * 12.5, Size * 2, Size * 5, Size * 4), 0)
+    SCREEN.blit( p.font.SysFont('comicsans', Size, True).render('NEXT:', True, (255, 255, 255)), (Size * 13.25, Size * 0.5))
 
     for y, row in enumerate(matrix):
         for x, obj in enumerate(row):
@@ -90,7 +93,7 @@ def draw(matrix, figure):
 
 
 p.init()
-SCREEN = p.display.set_mode((Size * 10, Size * 20))
+SCREEN = p.display.set_mode((Size * 20, Size * 20))
 
 Time = time.perf_counter()
 move_time = 0.5
@@ -106,7 +109,7 @@ while True:
         for y, row in enumerate(data['figure']):
             for x, obj in enumerate(row):
                 if obj:
-                    print(y, data['y'], x, data['x'])
+                    #print(y, data['y'], x, data['x'])
                     field[y + data['y'] - 1][x + data['x']] = data['color']
 
         for y, row in enumerate(field):
@@ -125,7 +128,7 @@ while True:
     NewTime = time.perf_counter()
     if NewTime - Time >= move_time:
         data['y'] += 1
-        print('Cords:', data['y'], data['x'])
+        print('Cords:', data['x'], data['y'])
 
         Time = NewTime
 
@@ -137,10 +140,21 @@ while True:
             if event.key == p.K_LEFT:
                 if data['x'] > 0:
                     data['x'] -= 1
+                    for y, row in enumerate(data['figure']):
+                        for x, obj in enumerate(row):
+                            if field[y + data['y']][x + data['x']] == 1:
+                                data['x'] -= 1
+
             elif event.key == p.K_RIGHT:
                 data['x'] += 1
+                for y, row in enumerate(data['figure']):
+                    for x, obj in enumerate(row):
+                        if obj and (x + data['x'] >= 10 or field[y + data['y']][x + data['x']] != 0):
+                            data['x'] -= 1
+
             elif event.key == p.K_UP:
                 data['figure'] = tuple(zip(*data['figure'][::-1]))
+
             elif event.key == p.K_DOWN:
                 while True:
                     data['y'] += 1
