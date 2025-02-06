@@ -41,7 +41,7 @@ def new_data():
 
 def game_over():
     SCREEN.blit(
-        p.font.SysFont('couriernew', Size/2).render(str('Game over! Press Enter to restart'), True, (255, 255, 255)),
+        p.font.SysFont('couriernew', int(Size/2)).render('Game over! Press Enter to restart', True, (255, 255, 255)),
         (0, 0))
     p.display.flip()
     while True:
