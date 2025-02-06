@@ -2,7 +2,7 @@ import pygame as p
 from random import randint
 import time, sys
 
-Size = 105
+Size = 30
 
 figures = {
     'Z': [[1, 1, 0],
