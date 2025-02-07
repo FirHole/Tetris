@@ -126,7 +126,10 @@ while True:
         if data['y'] == 0:
             game_over()
             data = new_data()
-            move_time = 0.5
+            move_time = 0.05
+            level = 1
+            lines_counter = 0
+            points = 0
             field = [[0 for _ in range(10)] for _ in range(20)]
             continue
         for y, row in enumerate(data['figure']):
@@ -159,14 +162,14 @@ while True:
                 points += 1200 * level
 
         lines_counter += lines
-        if lines_counter == 10:
+        if lines_counter >= 5:
             level += 1
-            lines_counter = 0
+            lines_counter -= 5
                 
         data = new_data()
 
     NewTime = time.perf_counter()
-    if NewTime - Time >= move_time / (level * 0.1):
+    if NewTime - Time >= move_time / (level + 10) * 100:
         data['y'] += 1
         print('Cords:', data['x'], data['y'])
 
