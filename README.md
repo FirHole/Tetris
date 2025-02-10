@@ -1,4 +1,4 @@
-Versoin Alpha 1.2
+Versoin Beta 1.0
 
 ⚠️ DOWNLOAD ONLY main.py ⚠️
 Archive is saved for idk
