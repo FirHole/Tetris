@@ -1,4 +1,4 @@
-Versoin Beta 1.0
+Versoin Beta 1.1
 
-⚠️ DOWNLOAD ONLY main.py ⚠️
-Archive is saved for idk
+⚠️ DONT'T DOWNLOAD ARCHIVE ⚠️
+It is saved for idk
