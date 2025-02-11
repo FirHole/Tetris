@@ -1,31 +1,10 @@
 import pygame as p # type: ignore
 from random import randint
 import time, sys
+import figures
+figures = figures.main()
 
-Size = 30
-
-figures = {
-    'Z': [[1, 1, 0],
-          [0, 1, 1]],
-
-    'S': [[0, 1, 1],
-          [1, 1, 0]],
-
-    'I': [[1, 1, 1, 1]],
-
-    'L': [[1, 1, 1],
-          [1, 0, 0]],
-
-    'J': [[1, 1, 1],
-          [0, 0, 1]],
-
-    'T': [[1, 1, 1],
-          [0, 1, 0]],
-
-    'O': [[1, 1],
-          [1, 1]]
-
-}
+Size = 50
 
 keys = list(figures.keys())
 field = [[0 for _ in range(10)] for _ in range(20)]
@@ -133,9 +112,9 @@ def exit_button(event):
     if button.collidepoint(p.mouse.get_pos()):
         if event.type == p.MOUSEBUTTONDOWN and event.button == 1:
             return True
-        SCREEN.blit(p.transform.scale(p.image.load('exit_pressed.png'), (Size, Size)), button)
+        SCREEN.blit(p.transform.scale(p.image.load('assets/exit_pressed.png'), (Size, Size)), button)
     else:
-        SCREEN.blit(p.transform.scale(p.image.load('exit.png'), (Size, Size)), button)
+        SCREEN.blit(p.transform.scale(p.image.load('assets/exit.png'), (Size, Size)), button)
     p.display.flip()
 
 
@@ -143,21 +122,18 @@ def custom():
     modes = [p.Rect(Size * 1, Size * 3, Size * 8, Size * 5),  p.Rect(Size * 11, Size * 3, Size * 8, Size * 5)]
     selected_mode = modes[0]
     figures = [p.Rect(Size * 1, Size * 10, Size * 3.75, Size * 3), p.Rect(Size * 5.75, Size * 10, Size * 3.75, Size * 3),  p.Rect(Size * 10.5, Size * 10, Size * 3.75, Size * 3), p.Rect(Size * 15.25, Size * 10, Size * 3.75, Size * 3)]
+    selected_figure = figures[1]
     play = p.Rect(Size * 6, Size * 15, Size * 8, Size)
 
     SCREEN.fill((70, 80, 90))
     SCREEN.blit( p.font.SysFont('comicsans', Size*1, True).render('CUSTOM SETTINGS', True, (255, 255, 255)), (Size * 5, Size * 1))
     while True:
-        for button, text in zip(modes + figures + [play], [' Default Mode', ' Uncorrectable Mode', '1,2,3minoes', 'Tetrominoes', 'Pentominoes','Hexominoes','           Play']):
-                if button.collidepoint(p.mouse.get_pos()):
-                    p.draw.rect(SCREEN, (30, 30, 30), button, 0)
+        for button, asset in zip(modes + figures + [play], ['default_mode', 'uncorrectable_mode', '123minoes', '4minoes', '5minoes', '6minoes']):
+                if selected_mode == button or selected_figure == button:
+                    SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'_selected.jpg'), (button[2], button[3])), button)
                 else:
-                   p.draw.rect(SCREEN, (50, 50, 50), button, 0)
-                font = p.font.SysFont('comicsans', int(Size/1.5), True).render(text, True, (255, 255, 255))
-                SCREEN.blit(font, button)
+                    SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'.jpg'), (button[2], button[3])), button)
 
-                if selected_mode == button:
-                    SCREEN.blit(p.transform.scale(p.image.load('square.png'), (Size * 8, Size * 5)), button)
 
         for event in p.event.get():
             if event.type == p.QUIT:
@@ -167,10 +143,14 @@ def custom():
                 return
             if event.type == p.MOUSEBUTTONDOWN and event.button == 1:
                 if play.collidepoint(event.pos):
-                    return True
+                    return modes.index(selected_mode), modes.index(selected_figure)
                 for mode in modes:
                     if mode.collidepoint(event.pos):
                        selected_mode = mode
+                for figure in figures:
+                    if figure.collidepoint(event.pos):
+                       selected_figure = figure
+                
 
         p.display.flip()
 
@@ -180,7 +160,7 @@ def menu():
     custom_button = p.Rect(Size * 5.5, Size * 12, Size * 8, Size)
 
     while True:
-        SCREEN.fill((100, 100, 100))
+        SCREEN.blit(p.transform.scale(p.image.load('assets/menu_bg.png'), (Size*20, Size*20)), (0,0))
         SCREEN.blit( p.font.SysFont('comicsans', Size*2, True).render('TETRIS+', True, (255, 255, 255)), (Size * 5.5, Size * 2))
 
         for event in p.event.get():
@@ -191,16 +171,18 @@ def menu():
                 if play_button.collidepoint(event.pos):
                     game()
                 if custom_button.collidepoint(event.pos):
-                    if custom():
-                        game()
-        for button, text in zip([play_button, custom_button], ['Play', 'Custom Mode (not ready)']):
-            if button.collidepoint(p.mouse.get_pos()):
-                p.draw.rect(SCREEN, (30, 30, 30), button, 0)
-            else:
-               p.draw.rect(SCREEN, (50, 50, 50), button, 0)
-            font = p.font.SysFont('comicsans', int(Size/1.5), True).render(text, True, (255, 255, 255))
-            text_rect = font.get_rect(center = (Size * 9.5, Size * (10.5 + (0 if text == 'Play' else 2))))
-            SCREEN.blit(font, text_rect)
+                    settings = custom()
+                    if settings:
+                        game(settings)
+        for button, asset in zip([play_button, custom_button], ['play', 'modes']):
+            #if button.collidepoint(p.mouse.get_pos()):
+            #    p.draw.rect(SCREEN, (30, 30, 30), button, 0)
+            #else:
+            #   p.draw.rect(SCREEN, (50, 50, 50), button, 0)
+            #font = p.font.SysFont('comicsans', int(Size/1.5), True).render(text, True, (255, 255, 255))
+            #text_rect = font.get_rect(center = (Size * 9.5, Size * (10.5 + (0 if text == 'Play' else 2))))
+            #SCREEN.blit(font, text_rect)
+            SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'.png'), (button[2], button[3])), button)
         p.display.flip()
 
 
