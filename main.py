@@ -3,7 +3,7 @@ from random import randint
 import time, sys
 import figures_loader
 
-size = 50
+size = 30
 
 
 def new_data():
