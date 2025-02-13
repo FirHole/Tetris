@@ -56,14 +56,16 @@ def exit_button(event = None):
 
 
 def custom():
-    modes = [p.Rect(size * 1, size * 2, size * 8, size * 5),  p.Rect(size * 11, size * 2, size * 8, size * 5), p.Rect(size * 6, size * 8, size * 8, size * 5)]
+    modes = [p.Rect(size * 0.6, size * 3, size * 5.6, size * 3.5),  p.Rect(size * 7.2, size * 3, size * 5.6, size * 3.5), p.Rect(size * 13.8, size * 3, size * 5.6, size * 3.5)]
     selected_mode = modes[0]
     pieces = [p.Rect(size * 3.125, size * 14, size * 3.75, size * 3), p.Rect(size * 8.125, size * 14, size * 3.75, size * 3),  p.Rect(size * 13.125, size * 14, size * 3.75, size * 3)]
     selected_pieces = [pieces[1]]
     play = p.Rect(size * 6, size * 18, size * 8, size)
 
     SCREEN.blit(p.transform.scale(p.image.load('assets/custom_bg.png'), (size*20, size*20)), (0,0))
-    SCREEN.blit( p.font.SysFont('comicsans', size*1, True).render('CUSTOM SETTINGS', True, (255, 255, 255)), (size * 5, size * 0.2))
+    SCREEN.blit( p.font.SysFont('comicsans', size*1, True).render('CUSTOM SETTINGS', True, (255, 255, 255)), (size * 5, size * 0.5))
+    SCREEN.blit(p.transform.scale(p.image.load('assets/line.png'), (size * 20, size * 0.31)), (0, size * 7.5))
+    SCREEN.blit( p.font.SysFont('comicsans', size*1, True).render('Blocks in one figure', True, (255, 255, 255)), (size * 5, size * 8))
 
     while True:
         if play.collidepoint(p.mouse.get_pos()) and selected_pieces:
