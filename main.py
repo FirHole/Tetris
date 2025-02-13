@@ -1,7 +1,6 @@
 import pygame as p
 from random import randint
-import time, sys
-import figures_loader
+import time, sys, webbrowser, figures_loader 
 
 size = 30
 
@@ -119,9 +118,10 @@ def menu():
     while True:
         play_button = p.Rect(size * 5.5, size * 10, size * 8, size)
         custom_button = p.Rect(size * 5.5, size * 12, size * 8, size)
+        link_rect = p.Rect(size * 12, size * 4.5, size * 5, size * 1)
 
         SCREEN.blit(p.transform.scale(p.image.load('assets/menu_bg.png'), (size*20, size*20)), (0,0))
-        SCREEN.blit( p.font.SysFont('comicsans', size*2, True).render('TETRIS+', True, (255, 255, 255)), (size * 5.5, size * 2))
+        SCREEN.blit( p.font.SysFont('comicsans', size*2, True,).render('TETRIS+', True, (255, 255, 255)), (size * 5.5, size * 2))
         SCREEN.blit( p.font.SysFont('comicsans', size // 2, True).render('by FirHole', True, (255, 255, 255)), (size * 12, size * 4.5))
 
         for event in p.event.get():
@@ -138,6 +138,12 @@ def menu():
                     if settings:
                         game(settings)
                         return
+                if link_rect.collidepoint(event.pos):
+                    webbrowser.open('https://github.com/firhole')
+                    
+                    
+        if link_rect.collidepoint(p.mouse.get_pos()):
+            SCREEN.blit( p.font.SysFont('comicsans', size // 2, True).render('by FirHole', True, (200, 200, 255)), (size * 12, size * 4.5))   
 
         for button, asset in zip([play_button, custom_button], ['play', 'modes']):
             if button.collidepoint(p.mouse.get_pos()):
@@ -153,7 +159,7 @@ def update():
 
     p.draw.rect(SCREEN, ((70, 75, 150) if move_time > 0 else (80, 85, 160)), p.Rect(size * 10, 0, size * 20, size * 20), 0)
 
-    for x in range(0, block * (10 if field_size == 30 else 11), block):
+    for x in range(0, block * field_size // 2 + 1, block):
         p.draw.line(SCREEN, (50, 50, 50), (x, 0), (x, size * 20), 2)
 
 
@@ -203,6 +209,7 @@ def update():
                         p.draw.rect(SCREEN, data['color'], piece, 0)
                         p.draw.lines(SCREEN, (210, 210, 210), True, [((x + data['x']) * block, (y + data['y']) * block), ((x + data['x']) * block + block, (y + data['y']) * block), ((x + data['x']) * block + block, (y + data['y']) * block + block), ((x + data['x']) * block, (y + data['y']) * block + block)], 1)
                     else:
+                        data['y'] -= 1
                         return True
                 except:
                     data['x'] -= 1
@@ -249,9 +256,6 @@ def game(settings = [0, [1]]):
     hold_times = 1
     bg = p.image.load('assets/custom_bg.png')
 
-    if settings[0] == 3:
-        pass
-
     field = [[0 for _ in range(field_size // 2)] for _ in range(field_size)]
     data = new_data()
 
@@ -269,18 +273,31 @@ def game(settings = [0, [1]]):
                 field = [[0 for _ in range(field_size // 2)] for _ in range(field_size)]
                 continue
 
-            if settings[0] == 2:
+            '''if settings[0] == 2:
                 ystop = field_size + 1
             else:
-                ystop = data['y']
+                ystop = data['y'] + 1'''
 
-            for ypos in range(data['y'] - 1, ystop):
-                for y, row in enumerate(data['figure']):
-                    for x, obj in enumerate(row):
-                        if y + ypos >= field_size:
-                            break
-                        if obj and field[y + ypos][x + data['x']] == 0:
-                            field[y + ypos][x + data['x']] = data['color']
+            for y, row in enumerate(data['figure']):
+                for x, obj in enumerate(row):
+                    if obj:
+                        if settings[0] == 2:
+                            up = 0
+                            while field[up + y + data['y']][x + data['x']]:
+                                up -= 1
+
+                            for ypos in range(up + y + data['y'], field_size):
+                                #print(ypos + 1, x + data['x'], field[ypos + 1][x + data['x']])
+                                if ypos == field_size - 1 or field[ypos + 1][x + data['x']]: #or (y + 1 < len(data['figure']) and data['figure'][y  + 1][x]):
+                                    #y + ypos + 1 >= field_size or 
+                                    break
+                        else:
+                            ypos = y + data['y']
+                        
+                        print('Found', x + data['x'], y + data['y'])
+                        #if y + ypos < field_size or field[y + ypos + 1][x + data['x']] == 1:
+                        field[ypos][x + data['x']] = data['color']
+
 
             lines = 0
             for y, row in enumerate(field):
