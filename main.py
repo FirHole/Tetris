@@ -139,7 +139,7 @@ def menu():
                         game(settings)
                         return
                 if link_rect.collidepoint(event.pos):
-                    webbrowser.open('https://github.com/firhole')
+                    webbrowser.open('https://taplink.cc/firhole')
                     
                     
         if link_rect.collidepoint(p.mouse.get_pos()):
