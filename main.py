@@ -1,8 +1,6 @@
 import pygame as p
 from random import randint
-import time, sys, webbrowser, figures_loader 
-
-size = 30
+import time, sys, webbrowser, figures_loader, os
 
 
 def new_data():
@@ -46,12 +44,12 @@ def game_over():
 
 def exit_button(event = None):
     button = p.Rect(size/2, size/2, size, size)
-    if button.collidepoint(p.mouse.get_pos()) and event:
-        if event.type == p.MOUSEBUTTONDOWN and event.button == 1:
-            return True
-        SCREEN.blit(p.transform.scale(p.image.load('assets/exit_pressed.png'), (size, size)), button)
+    if event and ((button.collidepoint(p.mouse.get_pos()) and event.type == p.MOUSEBUTTONDOWN and event.button == 1) or (event.type == p.KEYDOWN and event.key == p.K_ESCAPE)):
+        return True
+    if button.collidepoint(p.mouse.get_pos()):
+        SCREEN.blit(p.transform.scale(p.image.load(assets + 'exit_pressed.png'), (size, size)), button)
     else:
-        SCREEN.blit(p.transform.scale(p.image.load('assets/exit.png'), (size, size)), button)
+        SCREEN.blit(p.transform.scale(p.image.load(assets + 'exit.png'), (size, size)), button)
 
 
 
@@ -63,7 +61,7 @@ def windowfix(event):
 
 
 def custom():
-    bg, line = p.image.load('assets/custom_bg.png'), p.image.load('assets/line.png')
+    bg, line = p.image.load(assets + 'custom_bg.png'), p.image.load(assets + 'line.png')
     modes = [p.Rect(size * 0.6, size * 3, size * 5.6, size * 3.5),  p.Rect(size * 7.2, size * 3, size * 5.6, size * 3.5), p.Rect(size * 13.8, size * 3, size * 5.6, size * 3.5)]
     selected_mode = modes[0]
     pieces = [p.Rect(size * 3.125, size * 12, size * 3.75, size * 3), p.Rect(size * 8.125, size * 12, size * 3.75, size * 3),  p.Rect(size * 13.125, size * 12, size * 3.75, size * 3)]
@@ -79,15 +77,15 @@ def custom():
 
 
         if play.collidepoint(p.mouse.get_pos()) and selected_pieces:
-            SCREEN.blit(p.transform.scale(p.image.load('assets/play_custom_pressed.png'), (play[2], play[3])), play)
+            SCREEN.blit(p.transform.scale(p.image.load(assets + 'play_custom_pressed.png'), (play[2], play[3])), play)
         else:
-            SCREEN.blit(p.transform.scale(p.image.load('assets/play_custom.png'), (play[2], play[3])), play)
+            SCREEN.blit(p.transform.scale(p.image.load(assets + 'play_custom.png'), (play[2], play[3])), play)
 
         for button, asset in zip(modes + pieces + [play], ['default_mode', 'linear_mode', 'gravity_mode', '123', '4', '5']):
                 if selected_mode == button or button in selected_pieces:
-                    SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'_selected.jpg'), (button[2], button[3])), button)
+                    SCREEN.blit(p.transform.scale(p.image.load(assets + ''+asset+'_selected.jpg'), (button[2], button[3])), button)
                 else:
-                    SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'.jpg'), (button[2], button[3])), button)
+                    SCREEN.blit(p.transform.scale(p.image.load(assets + ''+asset+'.jpg'), (button[2], button[3])), button)
 
         exit_button()
         for event in p.event.get():
@@ -120,7 +118,7 @@ def menu():
         custom_button = p.Rect(size * 5.5, size * 12, size * 8, size)
         link_rect = p.Rect(size * 12, size * 4.5, size * 5, size * 1)
 
-        SCREEN.blit(p.transform.scale(p.image.load('assets/menu_bg.png'), (size*20, size*20)), (0,0))
+        SCREEN.blit(p.transform.scale(p.image.load(assets + 'menu_bg.png'), (size*20, size*20)), (0,0))
         SCREEN.blit( p.font.SysFont('comicsans', size*2, True,).render('TETRIS+', True, (255, 255, 255)), (size * 5.5, size * 2))
         SCREEN.blit( p.font.SysFont('comicsans', size // 2, True).render('by FirHole', True, (255, 255, 255)), (size * 12, size * 4.5))
 
@@ -147,9 +145,9 @@ def menu():
 
         for button, asset in zip([play_button, custom_button], ['play', 'modes']):
             if button.collidepoint(p.mouse.get_pos()):
-                SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'_pressed.png'), (button[2], button[3])), button)
+                SCREEN.blit(p.transform.scale(p.image.load(assets + ''+asset+'_pressed.png'), (button[2], button[3])), button)
             else:
-               SCREEN.blit(p.transform.scale(p.image.load('assets/'+asset+'.png'), (button[2], button[3])), button)
+               SCREEN.blit(p.transform.scale(p.image.load(assets + ''+asset+'.png'), (button[2], button[3])), button)
         p.display.flip()
 
 
@@ -254,7 +252,7 @@ def game(settings = [0, [1]]):
     points = 0
     hold = {'figure': [[]]}
     hold_times = 1
-    bg = p.image.load('assets/custom_bg.png')
+    bg = p.image.load(assets + 'custom_bg.png')
 
     field = [[0 for _ in range(field_size // 2)] for _ in range(field_size)]
     data = new_data()
@@ -287,15 +285,10 @@ def game(settings = [0, [1]]):
                                 up -= 1
 
                             for ypos in range(up + y + data['y'], field_size):
-                                #print(ypos + 1, x + data['x'], field[ypos + 1][x + data['x']])
-                                if ypos == field_size - 1 or field[ypos + 1][x + data['x']]: #or (y + 1 < len(data['figure']) and data['figure'][y  + 1][x]):
-                                    #y + ypos + 1 >= field_size or 
+                                if ypos == field_size - 1 or field[ypos + 1][x + data['x']]:
                                     break
                         else:
                             ypos = y + data['y']
-                        
-                        print('Found', x + data['x'], y + data['y'])
-                        #if y + ypos < field_size or field[y + ypos + 1][x + data['x']] == 1:
                         field[ypos][x + data['x']] = data['color']
 
 
@@ -338,7 +331,7 @@ def game(settings = [0, [1]]):
         NewTime = time.perf_counter()
         if NewTime - Time >= move_time / (level + 10) * 100:
             data['y'] += 1
-            print('Cords:', data['x'], data['y'])
+            #print('Cords:', data['x'], data['y'])
 
             Time = NewTime
 
@@ -406,10 +399,13 @@ def game(settings = [0, [1]]):
                                 continue
                             break
 
+size = 30
 SCREEN = p.display.set_mode((size * 20, size * 20), p.RESIZABLE)
+assets = os.path.dirname(os.path.abspath(__file__)) + '/assets/'
+
 p.init()
 p.display.set_caption('TETRIS+')
-p.display.set_icon(p.image.load('assets/custom_bg.png'))
+p.display.set_icon(p.image.load(assets + 'firhole.png'))
 
 while True:
     menu()

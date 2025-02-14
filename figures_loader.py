@@ -98,7 +98,7 @@ def main(pieces, mode):
               [1, 1, 1]]
     }]
 
-      linear = ['o', '2I', '3I', 'v', '4I', 'l', 'j', '5I', 'V', 'J', 'L']
+      linear = ['o', '2I', '3I', 'v', '4I', 'l', 'j', 'O', '5I', 'T', 'V', 'J', 'L', "Y'", 'Y', 'P', 'Q']
       size = [0.5, 1, 1.5]
 
       request = {}
