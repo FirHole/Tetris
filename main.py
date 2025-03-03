@@ -1,6 +1,8 @@
-import pygame as p
 from random import randint
 import time, sys, webbrowser, figures_loader, os
+
+os.system("pip install pygame")
+import pygame as p
 
 
 def new_data():
