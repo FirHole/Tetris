@@ -10,6 +10,7 @@ _A project for "ОПД Python"_
 4. Unzip it
 5. Open ```main.py``` from the folder
 
-**EXPERIMANTAL INSTALLATION**
+
+**EXPERIMANTAL INSTALLATION VERSION**:
 1. install Python (steps 1-2)
 2. Go to [releases](https://github.com/FirHole/Tetris/releases/), download "setup.experimental.exe" from the latest release and open it
