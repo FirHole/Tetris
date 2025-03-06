@@ -343,7 +343,7 @@ def game(settings = [0, [1]]):
                 p.quit()
                 sys.exit()
             if event.type == p.KEYDOWN:
-                if event.key == p.K_LEFT:
+                if event.key == p.K_LEFT or event.key == p.K_a:
                     if data['x'] > 0:
                         data['x'] -= 1
                         for y, row in enumerate(data['figure']):
@@ -351,17 +351,17 @@ def game(settings = [0, [1]]):
                                 if field[y + data['y']][x + data['x']] == 1:
                                     data['x'] -= 1
 
-                if event.key == p.K_RIGHT:
+                if event.key == p.K_RIGHT or event.key == p.K_d:
                     data['x'] += 1
                     for y, row in enumerate(data['figure']):
                         for x, obj in enumerate(row):
                             if obj and (x + data['x'] >= field_size // 2 or field[y + data['y']][x + data['x']] != 0):
                                 data['x'] -= 1
 
-                if event.key == p.K_UP:
+                if event.key == p.K_UP or event.key == p.K_w:
                     data['figure'] = tuple(zip(*data['figure'][::-1]))
 
-                if event.key == p.K_DOWN:
+                if event.key == p.K_DOWN or event.key == p.K_s:
                     move_time = 0.01
 
                 if event.key == p.K_SPACE:
