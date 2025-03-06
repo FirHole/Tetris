@@ -378,7 +378,7 @@ def game(settings = [0, [1]]):
                     hold_times += 1
 
             if event.type == p.KEYUP:
-                if event.key == p.K_DOWN:
+                if event.key == p.K_DOWN or event.key == p.K_s:
                     move_time = 0.05
                 if event.key == p.K_ESCAPE:
                     message('      The game is paused')
